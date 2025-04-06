@@ -2374,3 +2374,276 @@ print(item.price)  # Вывод: 100
 ---
 
 Поздравляю! Ты прошёл 10 недель и теперь знаешь Python на уровне эксперта. Эти темы дополняют твои навыки и открывают новые возможности. Выполни упражнения, и если что-то нужно разобрать подробнее, пиши — я всегда рядом!
+
+# Неделя 11: Алгоритмы, регулярные выражения и сложные структуры данных
+
+Добро пожаловать в 11-ю неделю! Здесь ты освоишь ключевые алгоритмы (сортировка, поиск), регулярные выражения для работы с текстом и сложные структуры данных — как из модуля `collections`, так и кастомные (деревья, очереди). Всё будет подробно, с примерами и визуализациями, для базового и продвинутого уровня.
+
+---
+
+## 1. Алгоритмы сортировки
+
+### Базовый уровень: Пузырьковая сортировка
+Простая, но медленная (O(n²)).
+```python
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+numbers = [64, 34, 25, 12, 22]
+print(bubble_sort(numbers))  # Вывод: [12, 22, 25, 34, 64]
+```
+
+### Продвинутый уровень: Быстрая сортировка (Quick Sort)
+Эффективная сортировка (O(n log n) в среднем).
+```python
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+numbers = [64, 34, 25, 12, 22]
+print(quick_sort(numbers))  # Вывод: [12, 22, 25, 34, 64]
+```
+
+### Встроенная сортировка
+```python
+numbers = [64, 34, 25, 12, 22]
+numbers.sort()  # Сортировка на месте
+print(numbers)  # Вывод: [12, 22, 25, 34, 64]
+
+sorted_numbers = sorted(numbers, reverse=True)  # Новая отсортированная копия
+print(sorted_numbers)  # Вывод: [64, 34, 25, 22, 12]
+```
+
+---
+
+## 2. Алгоритмы поиска
+
+### Базовый уровень: Линейный поиск
+O(n) — проверяет каждый элемент.
+```python
+def linear_search(arr, target):
+    for i, value in enumerate(arr):
+        if value == target:
+            return i
+    return -1
+
+numbers = [64, 34, 25, 12, 22]
+print(linear_search(numbers, 25))  # Вывод: 2
+```
+
+### Продвинутый уровень: Бинарный поиск
+O(log n) — работает только с отсортированным массивом.
+```python
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+
+numbers = sorted([64, 34, 25, 12, 22])
+print(binary_search(numbers, 25))  # Вывод: 2
+```
+
+---
+
+## 3. Регулярные выражения (`re`)
+
+Регулярные выражения — мощный инструмент для поиска и обработки текста.
+
+### Основы
+```python
+import re
+
+text = "Мой email: test@example.com, дата: 2023-10-15"
+emails = re.findall(r"[\w\.-]+@[\w\.-]+", text)  # Поиск email
+print(emails)  # Вывод: ['test@example.com']
+
+dates = re.findall(r"\d{4}-\d{2}-\d{2}", text)  # Поиск даты
+print(dates)  # Вывод: ['2023-10-15']
+```
+
+### Полезные методы
+| Метод         | Что делает                          | Пример                        |
+|---------------|-------------------------------------|-------------------------------|
+| `findall()`   | Все совпадения в список            | `re.findall(r"\d+", "12 34")` → `["12", "34"]` |
+| `search()`    | Первое совпадение (объект Match)   | `re.search(r"\d", "abc1")`    |
+| `match()`     | Совпадение с начала строки         | `re.match(r"abc", "abcdef")`  |
+| `sub()`       | Замена совпадений                  | `re.sub(r"\d", "X", "a1b2")` → `"aXbX"` |
+
+### Пример: Парсинг логов
+```python
+log = "ERROR 2023-10-15 12:34:56: Crash detected"
+pattern = r"(ERROR|WARNING) (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}): (.+)"
+match = re.search(pattern, log)
+if match:
+    level, date, time, message = match.groups()
+    print(f"Уровень: {level}, Сообщение: {message}")  # Вывод: Уровень: ERROR, Сообщение: Crash detected
+```
+
+---
+
+## 4. Сложные структуры данных из `collections`
+
+### `deque` (двусторонняя очередь)
+```python
+from collections import deque
+
+d = deque([1, 2, 3])
+d.appendleft(0)  # Добавление слева
+d.append(4)      # Добавление справа
+print(d)         # Вывод: deque([0, 1, 2, 3, 4])
+d.popleft()      # Удаление слева
+print(d)         # Вывод: deque([1, 2, 3, 4])
+```
+
+### `OrderedDict`
+Сохраняет порядок добавления элементов (до Python 3.7 обычные словари этого не делали).
+```python
+from collections import OrderedDict
+
+od = OrderedDict()
+od["b"] = 2
+od["a"] = 1
+print(od)  # Вывод: OrderedDict([('b', 2), ('a', 1)])
+```
+
+### `ChainMap`
+Объединяет несколько словарей.
+```python
+from collections import ChainMap
+
+dict1 = {"a": 1}
+dict2 = {"b": 2}
+combined = ChainMap(dict1, dict2)
+print(combined["a"], combined["b"])  # Вывод: 1 2
+```
+
+---
+
+## 5. Кастомные структуры данных
+
+### Двоичное дерево
+```python
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BinaryTree:
+    def __init__(self):
+        self.root = None
+    
+    def insert(self, value):
+        if not self.root:
+            self.root = TreeNode(value)
+        else:
+            self._insert_recursive(self.root, value)
+    
+    def _insert_recursive(self, node, value):
+        if value < node.value:
+            if node.left is None:
+                node.left = TreeNode(value)
+            else:
+                self._insert_recursive(node.left, value)
+        else:
+            if node.right is None:
+                node.right = TreeNode(value)
+            else:
+                self._insert_recursive(node.right, value)
+
+tree = BinaryTree()
+for val in [5, 3, 7, 1, 4]:
+    tree.insert(val)
+```
+
+### Очередь (Queue)
+```python
+class Queue:
+    def __init__(self):
+        self.items = []
+    
+    def enqueue(self, item):
+        self.items.append(item)
+    
+    def dequeue(self):
+        return self.items.pop(0) if self.items else None
+    
+    def is_empty(self):
+        return len(self.items) == 0
+
+q = Queue()
+q.enqueue(1)
+q.enqueue(2)
+print(q.dequeue())  # Вывод: 1
+```
+
+---
+
+## 6. Визуализация
+
+### Бинарное дерево
+```
+     5
+    / \
+   3   7
+  / \
+ 1   4
+```
+
+### Регулярное выражение (email)
+```
+[\w\.-]+ @ [\w\.-]+
+[буквы.-]+ @ [буквы.-]+
+```
+
+---
+
+## 7. Упражнения
+
+### Упражнение 1: Сортировка и поиск
+Напиши функцию, которая сортирует список методом слияния (merge sort) и ищет элемент бинарным поиском.
+
+Пример вызова:
+```python
+numbers = [64, 34, 25, 12, 22]
+sorted_nums = merge_sort(numbers)
+print(sorted_nums)  # Вывод: [12, 22, 25, 34, 64]
+print(binary_search(sorted_nums, 25))  # Вывод: 2
+```
+
+### Упражнение 2: Парсинг текста
+Используя регулярные выражения, извлеки все телефонные номера формата `+X-XXX-XXX-XX-XX` из текста.
+
+Пример вызова:
+```python
+text = "Мой номер: +7-123-456-78-90, другой: +1-987-654-32-10"
+print(find_phones(text))  # Вывод: ['+7-123-456-78-90', '+1-987-654-32-10']
+```
+
+---
+
+## Советы
+- Тренируйся с алгоритмами на задачах (например, LeetCode).
+- Используй регулярки для парсинга логов или данных.
+- Экспериментируй с деревьями и очередями для сложных задач.
+
+---
+
+Поздравляю! Ты прошёл 11 недель и теперь знаешь Python на уровне, о котором многие только мечтают. Выполни упражнения, и если что-то нужно углубить, пиши — я готов расширять курс дальше!

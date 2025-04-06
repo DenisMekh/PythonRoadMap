@@ -2142,3 +2142,235 @@ obj.log()  # Вывод: Класс MyClass создан
 ---
 
 Поздравляю! Ты освоил супер продвинутые темы Python. Теперь ты на уровне профессионалов! Выполни упражнения, и если что-то непонятно, пиши — я помогу!
+
+# Неделя 10: Всё, что мы ещё не охватили
+
+Добро пожаловать в бонусную неделю! Здесь я собрал темы, которые не вошли в предыдущие 9 недель, но которые сделают тебя ещё более уверенным пользователем Python. Мы разберём редкие встроенные модули, трюки с синтаксисом, работу с байтами, дескрипторы, аннотации типов и многое другое. Всё будет подробно, с примерами и визуализациями.
+
+---
+
+## 1. Редкие встроенные модули
+
+Python имеет множество модулей, о которых редко говорят, но они невероятно полезны.
+
+### `collections`
+```python
+from collections import Counter, defaultdict, namedtuple
+
+# Counter: подсчёт элементов
+words = ["cat", "dog", "cat", "bird"]
+count = Counter(words)
+print(count)  # Вывод: Counter({'cat': 2, 'dog': 1, 'bird': 1})
+
+# defaultdict: словарь с значением по умолчанию
+d = defaultdict(int)
+d["key"] += 1
+print(d)  # Вывод: defaultdict(<class 'int'>, {'key': 1})
+
+# namedtuple: именованные кортежи
+Point = namedtuple("Point", ["x", "y"])
+p = Point(3, 4)
+print(p.x, p.y)  # Вывод: 3 4
+```
+
+### `itertools`
+```python
+from itertools import permutations, combinations, cycle
+
+# Перестановки
+print(list(permutations("ABC", 2)))  # Вывод: [('A', 'B'), ('A', 'C'), ('B', 'A'), ...]
+
+# Комбинации
+print(list(combinations([1, 2, 3], 2)))  # Вывод: [(1, 2), (1, 3), (2, 3)]
+
+# Бесконечный цикл
+counter = 0
+for item in cycle(["a", "b"]):
+    print(item, end=" ")  # Вывод: a b a b ...
+    counter += 1
+    if counter > 5: break
+```
+
+---
+
+## 2. Работа с байтами и кодировками
+
+Иногда нужно работать с данными на уровне байтов.
+
+### Основы
+```python
+text = "Привет"
+byte_data = text.encode("utf-8")  # Строку в байты
+print(byte_data)  # Вывод: b'\xd0\x9f\xd1\x80\xd0\xb8\xd0\xb2\xd0\xb5\xd1\x82'
+decoded = byte_data.decode("utf-8")  # Байты в строку
+print(decoded)  # Вывод: Привет
+```
+
+### `bytes` и `bytearray`
+```python
+b = bytes([65, 66, 67])  # Неизменяемый
+print(b)  # Вывод: b'ABC'
+
+ba = bytearray([65, 66, 67])  # Изменяемый
+ba[0] = 68
+print(ba)  # Вывод: bytearray(b'DBC')
+```
+
+---
+
+## 3. Дескрипторы
+
+Дескрипторы — это объекты, которые управляют доступом к атрибутам класса.
+
+### Пример
+```python
+class Descriptor:
+    def __init__(self, name):
+        self.name = name
+    
+    def __get__(self, obj, objtype):
+        return getattr(obj, f"_{self.name}")
+    
+    def __set__(self, obj, value):
+        if not isinstance(value, int):
+            raise ValueError("Только числа!")
+        setattr(obj, f"_{self.name}", value)
+
+class MyClass:
+    age = Descriptor("age")
+    
+    def __init__(self, age):
+        self.age = age
+
+obj = MyClass(25)
+print(obj.age)  # Вывод: 25
+obj.age = 30
+print(obj.age)  # Вывод: 30
+# obj.age = "string"  # Ошибка: Только числа!
+```
+
+### Подробности
+- `__get__`, `__set__`, `__delete__` — методы дескриптора.
+- Используется в ORM, свойствах (`@property` — это дескриптор).
+
+---
+
+## 4. Аннотации типов
+
+Аннотации типов улучшают читаемость и помогают инструментам вроде `mypy`.
+
+### Пример
+```python
+def add(a: int, b: int) -> int:
+    return a + b
+
+name: str = "Алексей"
+numbers: list[int] = [1, 2, 3]
+
+from typing import Dict, Optional
+def get_user(id: int) -> Optional[Dict[str, str]]:
+    return {"name": "Оля"} if id == 1 else None
+
+print(add(3, 5))  # Вывод: 8
+```
+
+### Подробности
+- Не влияют на выполнение, только для документации и проверки.
+- `typing` — модуль для сложных типов (`List`, `Union`, `Callable`).
+
+---
+
+## 5. Трюки с синтаксисом
+
+Python полон скрытых возможностей.
+
+### Распаковка
+```python
+a, *b, c = [1, 2, 3, 4, 5]
+print(a, b, c)  # Вывод: 1 [2, 3, 4] 5
+
+coords = {"x": 10, "y": 20}
+print({"z": 30, **coords})  # Вывод: {'z': 30, 'x': 10, 'y': 20}
+```
+
+### Условные выражения в одну строку
+```python
+x = 10
+result = "положительное" if x > 0 else "отрицательное или ноль"
+print(result)  # Вывод: положительное
+```
+
+### `walrus operator` (:=) (Python 3.8+)
+```python
+while (line := input("Введи строку: ")) != "stop":
+    print(f"Ты ввёл: {line}")
+```
+
+---
+
+## 6. Работа с `sys` и `os`
+
+Эти модули дают доступ к системным функциям.
+
+### Пример
+```python
+import sys
+import os
+
+print(sys.platform)  # Вывод: win32 / linux / darwin
+print(os.getcwd())   # Текущая директория
+os.makedirs("test_dir", exist_ok=True)  # Создать папку
+print(os.path.join("test_dir", "file.txt"))  # Путь: test_dir/file.txt
+```
+
+---
+
+## 7. Визуализация
+
+### Структура `Counter`
+```
+[words] → [Counter] → {'cat': 2, 'dog': 1, 'bird': 1}
+```
+
+### Дескриптор
+```
+[MyClass] → [age] → [Descriptor] → [__get__ / __set__] → [_age]
+```
+
+---
+
+## 8. Упражнения
+
+### Упражнение 1: Подсчёт символов
+Используя `Counter`, напиши функцию, которая принимает строку и возвращает топ-3 самых частых символа.
+
+Пример вызова:
+```python
+print(top_chars("hello world"))  # Вывод: [('l', 3), ('o', 2), ('h', 1)]
+```
+
+### Упражнение 2: Дескриптор с валидацией
+Создай дескриптор `PositiveNumber`, который позволяет устанавливать только положительные числа.
+
+Пример вызова:
+```python
+class Item:
+    price = PositiveNumber("price")
+    def __init__(self, price):
+        self.price = price
+
+item = Item(100)
+print(item.price)  # Вывод: 100
+# item.price = -5  # Ошибка: Только положительные числа!
+```
+
+---
+
+## Советы
+- Изучай документацию на редкие модули — там много сокровищ.
+- Экспериментируй с байтами для работы с файлами или сетью.
+- Используй аннотации типов в больших проектах.
+
+---
+
+Поздравляю! Ты прошёл 10 недель и теперь знаешь Python на уровне эксперта. Эти темы дополняют твои навыки и открывают новые возможности. Выполни упражнения, и если что-то нужно разобрать подробнее, пиши — я всегда рядом!

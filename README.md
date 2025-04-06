@@ -2375,16 +2375,16 @@ print(item.price)  # Вывод: 100
 
 Поздравляю! Ты прошёл 10 недель и теперь знаешь Python на уровне эксперта. Эти темы дополняют твои навыки и открывают новые возможности. Выполни упражнения, и если что-то нужно разобрать подробнее, пиши — я всегда рядом!
 
-# Неделя 11: Алгоритмы, регулярные выражения и сложные структуры данных
+# Неделя 11: Алгоритмы, регулярные выражения и сложные структуры данных (расширенная версия)
 
-Добро пожаловать в 11-ю неделю! Здесь ты освоишь ключевые алгоритмы (сортировка, поиск), регулярные выражения для работы с текстом и сложные структуры данных — как из модуля `collections`, так и кастомные (деревья, очереди). Всё будет подробно, с примерами и визуализациями, для базового и продвинутого уровня.
+Добро пожаловать в расширенную 11-ю неделю! Здесь ты освоишь широкий спектр алгоритмов (сортировка, поиск, графы, динамическое программирование), глубоко разберёшься в регулярных выражениях, изучишь продвинутые структуры данных из `collections` и кастомные (деревья, очереди, графы, хэш-таблицы), а также познакомишься с битовыми операциями. Всё будет подробно, с примерами и визуализациями, для базового и продвинутого уровня.
 
 ---
 
 ## 1. Алгоритмы сортировки
 
-### Базовый уровень: Пузырьковая сортировка
-Простая, но медленная (O(n²)).
+### Базовый уровень
+1. **Пузырьковая сортировка (Bubble Sort)** — O(n²)
 ```python
 def bubble_sort(arr):
     n = len(arr)
@@ -2394,12 +2394,25 @@ def bubble_sort(arr):
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
     return arr
 
-numbers = [64, 34, 25, 12, 22]
-print(bubble_sort(numbers))  # Вывод: [12, 22, 25, 34, 64]
+print(bubble_sort([64, 34, 25, 12]))  # Вывод: [12, 25, 34, 64]
 ```
 
-### Продвинутый уровень: Быстрая сортировка (Quick Sort)
-Эффективная сортировка (O(n log n) в среднем).
+2. **Сортировка выбором (Selection Sort)** — O(n²)
+```python
+def selection_sort(arr):
+    for i in range(len(arr)):
+        min_idx = i
+        for j in range(i + 1, len(arr)):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr
+
+print(selection_sort([64, 34, 25, 12]))  # Вывод: [12, 25, 34, 64]
+```
+
+### Продвинутый уровень
+3. **Быстрая сортировка (Quick Sort)** — O(n log n) в среднем
 ```python
 def quick_sort(arr):
     if len(arr) <= 1:
@@ -2410,26 +2423,68 @@ def quick_sort(arr):
     right = [x for x in arr if x > pivot]
     return quick_sort(left) + middle + quick_sort(right)
 
-numbers = [64, 34, 25, 12, 22]
-print(quick_sort(numbers))  # Вывод: [12, 22, 25, 34, 64]
+print(quick_sort([64, 34, 25, 12]))  # Вывод: [12, 25, 34, 64]
 ```
 
-### Встроенная сортировка
+4. **Сортировка слиянием (Merge Sort)** — O(n log n)
 ```python
-numbers = [64, 34, 25, 12, 22]
-numbers.sort()  # Сортировка на месте
-print(numbers)  # Вывод: [12, 22, 25, 34, 64]
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
 
-sorted_numbers = sorted(numbers, reverse=True)  # Новая отсортированная копия
-print(sorted_numbers)  # Вывод: [64, 34, 25, 22, 12]
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+print(merge_sort([64, 34, 25, 12]))  # Вывод: [12, 25, 34, 64]
+```
+
+5. **Сортировка кучей (Heap Sort)** — O(n log n)
+```python
+def heap_sort(arr):
+    def heapify(arr, n, i):
+        largest = i
+        left = 2 * i + 1
+        right = 2 * i + 2
+        if left < n and arr[left] > arr[largest]:
+            largest = left
+        if right < n and arr[right] > arr[largest]:
+            largest = right
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(arr, n, largest)
+    
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+    return arr
+
+print(heap_sort([64, 34, 25, 12]))  # Вывод: [12, 25, 34, 64]
 ```
 
 ---
 
 ## 2. Алгоритмы поиска
 
-### Базовый уровень: Линейный поиск
-O(n) — проверяет каждый элемент.
+### Базовый уровень
+1. **Линейный поиск** — O(n)
 ```python
 def linear_search(arr, target):
     for i, value in enumerate(arr):
@@ -2437,12 +2492,11 @@ def linear_search(arr, target):
             return i
     return -1
 
-numbers = [64, 34, 25, 12, 22]
-print(linear_search(numbers, 25))  # Вывод: 2
+print(linear_search([64, 34, 25, 12], 25))  # Вывод: 2
 ```
 
-### Продвинутый уровень: Бинарный поиск
-O(log n) — работает только с отсортированным массивом.
+### Продвинутый уровень
+2. **Бинарный поиск** — O(log n)
 ```python
 def binary_search(arr, target):
     left, right = 0, len(arr) - 1
@@ -2456,89 +2510,139 @@ def binary_search(arr, target):
             right = mid - 1
     return -1
 
-numbers = sorted([64, 34, 25, 12, 22])
+numbers = sorted([64, 34, 25, 12])
 print(binary_search(numbers, 25))  # Вывод: 2
+```
+
+3. **Поиск в глубину (DFS) для графа**
+```python
+def dfs(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    visited.add(start)
+    print(start, end=" ")
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+
+graph = {0: [1, 2], 1: [0, 3], 2: [0, 4], 3: [1], 4: [2]}
+dfs(graph, 0)  # Вывод: 0 1 3 2 4
+```
+
+4. **Поиск в ширину (BFS) для графа**
+```python
+from collections import deque
+
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    while queue:
+        vertex = queue.popleft()
+        print(vertex, end=" ")
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+graph = {0: [1, 2], 1: [0, 3], 2: [0, 4], 3: [1], 4: [2]}
+bfs(graph, 0)  # Вывод: 0 1 2 3 4
 ```
 
 ---
 
-## 3. Регулярные выражения (`re`)
+## 3. Регулярные выражения (`re`) — углублённо
 
-Регулярные выражения — мощный инструмент для поиска и обработки текста.
-
-### Основы
+### Основы и продвинутые шаблоны
 ```python
 import re
 
-text = "Мой email: test@example.com, дата: 2023-10-15"
-emails = re.findall(r"[\w\.-]+@[\w\.-]+", text)  # Поиск email
+text = "Контакты: test@example.com, +7-123-456-78-90, дата: 2023-10-15 14:30"
+# Email
+emails = re.findall(r"[\w\.-]+@[\w\.-]+\.\w+", text)
 print(emails)  # Вывод: ['test@example.com']
 
-dates = re.findall(r"\d{4}-\d{2}-\d{2}", text)  # Поиск даты
-print(dates)  # Вывод: ['2023-10-15']
+# Телефон
+phones = re.findall(r"\+\d-\d{3}-\d{3}-\d{2}-\d{2}", text)
+print(phones)  # Вывод: ['+7-123-456-78-90']
+
+# Дата и время
+datetime = re.findall(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}", text)
+print(datetime)  # Вывод: ['2023-10-15 14:30']
 ```
 
-### Полезные методы
-| Метод         | Что делает                          | Пример                        |
-|---------------|-------------------------------------|-------------------------------|
-| `findall()`   | Все совпадения в список            | `re.findall(r"\d+", "12 34")` → `["12", "34"]` |
-| `search()`    | Первое совпадение (объект Match)   | `re.search(r"\d", "abc1")`    |
-| `match()`     | Совпадение с начала строки         | `re.match(r"abc", "abcdef")`  |
-| `sub()`       | Замена совпадений                  | `re.sub(r"\d", "X", "a1b2")` → `"aXbX"` |
-
-### Пример: Парсинг логов
+### Группы и именованные группы
 ```python
 log = "ERROR 2023-10-15 12:34:56: Crash detected"
-pattern = r"(ERROR|WARNING) (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}): (.+)"
+pattern = r"(?P<level>ERROR|WARNING) (?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}): (?P<msg>.+)"
 match = re.search(pattern, log)
 if match:
-    level, date, time, message = match.groups()
-    print(f"Уровень: {level}, Сообщение: {message}")  # Вывод: Уровень: ERROR, Сообщение: Crash detected
+    print(match.group("level"))  # Вывод: ERROR
+    print(match.group("msg"))    # Вывод: Crash detected
+```
+
+### Жадные и ленивые квантификаторы
+```python
+text = "<p>Hello</p><p>World</p>"
+greedy = re.findall(r"<p>.*</p>", text)      # Жадный
+print(greedy)  # Вывод: ['<p>Hello</p><p>World</p>']
+lazy = re.findall(r"<p>.*?</p>", text)       # Ленивый
+print(lazy)    # Вывод: ['<p>Hello</p>', '<p>World</p>']
 ```
 
 ---
 
 ## 4. Сложные структуры данных из `collections`
 
-### `deque` (двусторонняя очередь)
+### `deque`
 ```python
 from collections import deque
 
-d = deque([1, 2, 3])
-d.appendleft(0)  # Добавление слева
-d.append(4)      # Добавление справа
-print(d)         # Вывод: deque([0, 1, 2, 3, 4])
-d.popleft()      # Удаление слева
-print(d)         # Вывод: deque([1, 2, 3, 4])
+d = deque([1, 2, 3], maxlen=5)  # Ограниченная длина
+d.append(4)
+d.appendleft(0)
+print(d)  # Вывод: deque([0, 1, 2, 3, 4], maxlen=5)
+d.append(5)  # Удаляет 0 из-за maxlen
+print(d)  # Вывод: deque([1, 2, 3, 4, 5], maxlen=5)
 ```
 
 ### `OrderedDict`
-Сохраняет порядок добавления элементов (до Python 3.7 обычные словари этого не делали).
 ```python
 from collections import OrderedDict
 
 od = OrderedDict()
-od["b"] = 2
+od["c"] = 3
 od["a"] = 1
-print(od)  # Вывод: OrderedDict([('b', 2), ('a', 1)])
+od.move_to_end("c")  # Перемещение в конец
+print(od)  # Вывод: OrderedDict([('a', 1), ('c', 3)])
 ```
 
 ### `ChainMap`
-Объединяет несколько словарей.
 ```python
 from collections import ChainMap
 
-dict1 = {"a": 1}
-dict2 = {"b": 2}
-combined = ChainMap(dict1, dict2)
-print(combined["a"], combined["b"])  # Вывод: 1 2
+d1 = {"a": 1, "b": 2}
+d2 = {"b": 3, "c": 4}
+cm = ChainMap(d1, d2)
+print(cm["b"])  # Вывод: 2 (берётся из d1)
+print(list(cm.keys()))  # Вывод: ['a', 'b', 'c']
+```
+
+### `Counter`
+```python
+from collections import Counter
+
+c = Counter("abracadabra")
+print(c.most_common(3))  # Вывод: [('a', 5), ('r', 2), ('b', 2)]
+c.subtract("abra")
+print(c)  # Вывод: Counter({'a': 2, 'r': 1, 'b': 1, 'c': 1, 'd': 1})
 ```
 
 ---
 
 ## 5. Кастомные структуры данных
 
-### Двоичное дерево
+### Двоичное дерево поиска (BST)
 ```python
 class TreeNode:
     def __init__(self, value):
@@ -2546,7 +2650,7 @@ class TreeNode:
         self.left = None
         self.right = None
 
-class BinaryTree:
+class BST:
     def __init__(self):
         self.root = None
     
@@ -2554,51 +2658,176 @@ class BinaryTree:
         if not self.root:
             self.root = TreeNode(value)
         else:
-            self._insert_recursive(self.root, value)
+            self._insert(self.root, value)
     
-    def _insert_recursive(self, node, value):
+    def _insert(self, node, value):
         if value < node.value:
             if node.left is None:
                 node.left = TreeNode(value)
             else:
-                self._insert_recursive(node.left, value)
+                self._insert(node.left, value)
         else:
             if node.right is None:
                 node.right = TreeNode(value)
             else:
-                self._insert_recursive(node.right, value)
+                self._insert(node.right, value)
+    
+    def inorder(self, node):
+        if node:
+            self.inorder(node.left)
+            print(node.value, end=" ")
+            self.inorder(node.right)
 
-tree = BinaryTree()
+bst = BST()
 for val in [5, 3, 7, 1, 4]:
-    tree.insert(val)
+    bst.insert(val)
+bst.inorder(bst.root)  # Вывод: 1 3 4 5 7
 ```
 
-### Очередь (Queue)
+### Очередь с приоритетами (Priority Queue)
 ```python
-class Queue:
-    def __init__(self):
-        self.items = []
-    
-    def enqueue(self, item):
-        self.items.append(item)
-    
-    def dequeue(self):
-        return self.items.pop(0) if self.items else None
-    
-    def is_empty(self):
-        return len(self.items) == 0
+from heapq import heappush, heappop
 
-q = Queue()
-q.enqueue(1)
-q.enqueue(2)
-print(q.dequeue())  # Вывод: 1
+class PriorityQueue:
+    def __init__(self):
+        self._queue = []
+    
+    def push(self, item, priority):
+        heappush(self._queue, (priority, item))
+    
+    def pop(self):
+        return heappop(self._queue)[1] if self._queue else None
+
+pq = PriorityQueue()
+pq.push("Task 1", 2)
+pq.push("Task 2", 1)
+print(pq.pop())  # Вывод: Task 2 (меньший приоритет первым)
+```
+
+### Хэш-таблица (простая реализация)
+```python
+class HashTable:
+    def __init__(self, size=10):
+        self.size = size
+        self.table = [[] for _ in range(size)]
+    
+    def _hash(self, key):
+        return hash(key) % self.size
+    
+    def put(self, key, value):
+        index = self._hash(key)
+        for item in self.table[index]:
+            if item[0] == key:
+                item[1] = value
+                return
+        self.table[index].append([key, value])
+    
+    def get(self, key):
+        index = self._hash(key)
+        for k, v in self.table[index]:
+            if k == key:
+                return v
+        return None
+
+ht = HashTable()
+ht.put("name", "Алексей")
+ht.put("age", 25)
+print(ht.get("name"))  # Вывод: Алексей
+```
+
+### Граф (с матрицей смежности)
+```python
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices
+        self.matrix = [[0] * vertices for _ in range(vertices)]
+    
+    def add_edge(self, u, v):
+        self.matrix[u][v] = 1
+        self.matrix[v][u] = 1  # Ненаправленный граф
+    
+    def print_graph(self):
+        for row in self.matrix:
+            print(row)
+
+g = Graph(4)
+g.add_edge(0, 1)
+g.add_edge(0, 2)
+g.add_edge(1, 3)
+g.print_graph()
+# Вывод:
+# [0, 1, 1, 0]
+# [1, 0, 0, 1]
+# [1, 0, 0, 0]
+# [0, 1, 0, 0]
 ```
 
 ---
 
-## 6. Визуализация
+## 6. Динамическое программирование
 
-### Бинарное дерево
+### Пример: Числа Фибоначчи
+```python
+def fib(n, memo={}):
+    if n in memo:
+        return memo[n]
+    if n <= 1:
+        return n
+    memo[n] = fib(n-1, memo) + fib(n-2, memo)
+    return memo[n]
+
+print(fib(50))  # Быстро благодаря мемоизации
+```
+
+### Пример: Задача о рюкзаке (Knapsack)
+```python
+def knapsack(values, weights, capacity):
+    n = len(values)
+    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for w in range(capacity + 1):
+            if weights[i-1] <= w:
+                dp[i][w] = max(dp[i-1][w], values[i-1] + dp[i-1][w - weights[i-1]])
+            else:
+                dp[i][w] = dp[i-1][w]
+    return dp[n][capacity]
+
+values = [60, 100, 120]
+weights = [10, 20, 30]
+capacity = 50
+print(knapsack(values, weights, capacity))  # Вывод: 280
+```
+
+---
+
+## 7. Битовые операции
+
+### Основы
+```python
+a = 5  # 0101 в двоичной
+b = 3  # 0011 в двоичной
+print(a & b)  # AND: 0001 → 1
+print(a | b)  # OR:  0111 → 7
+print(a ^ b)  # XOR: 0110 → 6
+print(~a)     # NOT: -6 (инверсия)
+print(a << 1) # Сдвиг влево: 1010 → 10
+print(a >> 1) # Сдвиг вправо: 0010 → 2
+```
+
+### Пример: Проверка чётности
+```python
+def is_even(n):
+    return n & 1 == 0
+
+print(is_even(4))  # Вывод: True
+print(is_even(7))  # Вывод: False
+```
+
+---
+
+## 8. Визуализация
+
+### Двоичное дерево
 ```
      5
     / \
@@ -2607,43 +2836,44 @@ print(q.dequeue())  # Вывод: 1
  1   4
 ```
 
-### Регулярное выражение (email)
+### Граф
 ```
-[\w\.-]+ @ [\w\.-]+
-[буквы.-]+ @ [буквы.-]+
+0 -- 1 -- 3
+| 
+2
 ```
 
 ---
 
-## 7. Упражнения
+## 9. Упражнения
 
-### Упражнение 1: Сортировка и поиск
-Напиши функцию, которая сортирует список методом слияния (merge sort) и ищет элемент бинарным поиском.
+### Упражнение 1: Сортировка и графы
+Реализуй сортировку вставками (Insertion Sort) и найди кратчайший путь в графе с помощью BFS.
 
 Пример вызова:
 ```python
-numbers = [64, 34, 25, 12, 22]
-sorted_nums = merge_sort(numbers)
-print(sorted_nums)  # Вывод: [12, 22, 25, 34, 64]
-print(binary_search(sorted_nums, 25))  # Вывод: 2
+print(insertion_sort([64, 34, 25, 12]))  # Вывод: [12, 25, 34, 64]
+graph = {0: [1, 2], 1: [0, 3], 2: [0], 3: [1]}
+print(shortest_path(graph, 0, 3))  # Вывод: [0, 1, 3]
 ```
 
-### Упражнение 2: Парсинг текста
-Используя регулярные выражения, извлеки все телефонные номера формата `+X-XXX-XXX-XX-XX` из текста.
+### Упражнение 2: Регулярки и хэш-таблица
+Напиши функцию, которая извлекает все URL из текста и сохраняет их в хэш-таблицу с количеством вхождений.
 
 Пример вызова:
 ```python
-text = "Мой номер: +7-123-456-78-90, другой: +1-987-654-32-10"
-print(find_phones(text))  # Вывод: ['+7-123-456-78-90', '+1-987-654-32-10']
+text = "Ссылки: https://example.com и https://test.com, снова https://example.com"
+ht = parse_urls(text)
+print(ht.get("https://example.com"))  # Вывод: 2
 ```
 
 ---
 
 ## Советы
-- Тренируйся с алгоритмами на задачах (например, LeetCode).
-- Используй регулярки для парсинга логов или данных.
-- Экспериментируй с деревьями и очередями для сложных задач.
+- Реализуй алгоритмы вручную, чтобы понять их работу.
+- Используй регулярки для сложного парсинга.
+- Экспериментируй с графами и динамическим программированием на задачах.
 
 ---
 
-Поздравляю! Ты прошёл 11 недель и теперь знаешь Python на уровне, о котором многие только мечтают. Выполни упражнения, и если что-то нужно углубить, пиши — я готов расширять курс дальше!
+Поздравляю! Ты прошёл расширенную 11-ю неделю и теперь знаешь ещё больше о Python. Это был настоящий глубокий погружение — ты готов к любым вызовам!
